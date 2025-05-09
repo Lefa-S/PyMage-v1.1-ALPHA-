@@ -1,0 +1,404 @@
+import time
+import random
+
+#Stat management
+default_mana = 100
+default_health = 150
+computer_mana_shield_active = False
+user_mana_shield_active = False
+computer_poison_active = False
+user_poison_active = False
+user_poison_turns_remaining = 3
+computer_poison_turns_remaining = 3
+computer_current_health = default_health
+computer_current_mana = default_mana
+user_current_health = default_health
+user_current_mana = default_mana
+
+#Abilities
+basic_attacks = ["Fireball", "Arcane Blast", "Lightning Strike"]
+elemental_attacks = ["Ice Shards", "Earthquake", "Poison Cloud"]
+defensive_abilities = ["Mana Shield", "Counter Strike", "Healing"]
+highrisk_highreward = ["Dark Pulse", "Inferno", "Soul Flare"]
+
+#Computer abilities random choice
+computer_basic_attacks = random.choice(basic_attacks)
+computer_elemental_attacks = random.choice(elemental_attacks)
+computer_defensive_attacks = random.choice(defensive_abilities)
+computer_highrisk_attacks = random.choice(highrisk_highreward)
+
+# Player abilities random choice
+user_basic_attacks = random.choice(basic_attacks)
+user_elemental_attacks = random.choice(elemental_attacks)
+user_defensive_attacks = random.choice(defensive_abilities)
+user_highrisk_attacks = random.choice(highrisk_highreward)
+
+def game_initiation():
+    global play_option
+    while True:
+        if play_option == "e":
+            pve_battle_logic()
+            break
+        elif play_option == "i":
+            ability_descriptions()
+            break
+        elif play_option == "q":
+            break
+        else:
+            print("Please enter a valid option.")
+            play_option = input(
+                "PyMage, are you ready? Enter E to conjure your destiny, I to see ability descriptions or Q to quit. ").lower()
+            continue
+
+def ability_descriptions():
+    global play_option
+    print("Basic Ability Descriptions:")
+    print("-" * 100)
+    print("Fireball: 30 dmg, 15 mana, Straightforward attack.")
+    print("Arcane Blast: 25 dmg, 10 mana, Reliable magic attack, no special effects.")
+    print("Lightning Strike: 45 dmg, 25 mana, 70% chance to hit (30% chance to miss).")
+    print("-" * 100)
+    print("Elemental Ability Descriptions:")
+    print("-" * 100)
+    print("Ice Shard: 18 dmg, 12 mana, 50% chance to freeze the enemy, causing them to skip their next turn.")
+    print("Earthquake: 28 dmg, 18 mana, 30% chance to stun (disable enemy for 1 turn).")
+    print("Poison Mist: 12 dmg (per turn over 3 turns), 15 mana, Reduces healing received by 50% for the duration.")
+    print("-" * 100)
+    print("Defensive Ability Descriptions:")
+    print("-" * 100)
+    print("Mana Shield: 0 dmg, 18 mana, Absorbs 50% of incoming damage for the next 2 turns.")
+    print("Counterstrike: 30 dmg, 15 mana, Blocks the next incoming attack and delivers 30 damage.")
+    print("Healing Light: 0 dmg, 20 mana, Heals 30 health.")
+    print("-" * 100)
+    print("High Risk High Reward Descriptions:")
+    print("-" * 100)
+    print("Dark Pulse: 40 dmg, 30 mana, Ignores defense.")
+    print("Inferno: 50 dmg, 40 mana, Deals 5 health damage per turn for 3 turns.")
+    print("Soul Flare: 60 dmg, 40 mana, If it lands, it deals massive damage. If it misses, you take 15 damage. Hit Chance: 60%")
+    print("-" * 100)
+    play_option = input("Begin game with e or quit with q? ")
+    game_initiation()
+
+
+
+#Poison functions
+def user_apply_poison():
+    global computer_current_health
+    global user_poison_turns_remaining
+
+    if user_poison_turns_remaining > 0:
+        computer_current_health -= 12  # Poison damage per turn
+        user_poison_turns_remaining -= 1
+        print("Poison damage dealt!")
+
+def computer_apply_poison():
+    global user_current_health
+    global computer_poison_turns_remaining
+
+    if computer_poison_turns_remaining > 0:
+        user_current_health -= 12  # Poison damage per turn
+        computer_poison_turns_remaining -= 1
+        print("Poison damage dealt!")
+
+#Checking if poison is active
+while computer_poison_active:
+    computer_apply_poison()
+
+while user_poison_active:
+    user_apply_poison()
+
+#Attack input
+def user_basic():
+    global computer_current_health
+    global user_current_mana
+    if user_basic_attacks == "Fireball":
+        computer_current_health -= 30  # Damage
+        user_current_mana -= 15  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif user_basic_attacks == "Arcane Blast":
+        computer_current_health -= 25  # Damage1
+        user_current_mana -= 10  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif user_basic_attacks == "Lightning Strike":
+        computer_current_health -= 45  # Damage
+        user_current_mana -= 25  # Mana cost
+        current_stats()
+        computer_functions()
+
+def user_elemental():
+    global computer_current_health
+    global user_current_mana
+    global user_poison_active
+    if user_elemental_attacks == "Ice Shards":
+        computer_current_health -= 18  # Damage
+        user_current_mana -= 12  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif user_elemental_attacks == "Earthquake":
+        computer_current_health -= 28  # Damage
+        user_current_mana -= 18  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif user_elemental_attacks == "Poison Cloud":
+        user_poison_active = True
+        computer_current_health -= 12  # Damage per turn over 3 turns
+        user_current_mana -= 15  # Mana cost
+        current_stats()
+        user_apply_poison()
+        computer_functions()
+
+def user_defensive():
+    global user_current_mana
+    global user_current_health
+    global user_mana_shield_active
+
+    if computer_defensive_attacks == "Mana Shield":
+        user_mana_shield_active = True  # Turn on the shield
+        user_current_mana -= 50
+        current_stats()
+        computer_functions()
+
+
+    elif computer_defensive_attacks == "Counter Strike":
+        user_current_mana -= 15  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif computer_defensive_attacks == "Healing":
+        user_current_health += 30  # Healing amount
+        user_current_mana -= 20  # Mana cost
+        current_stats()
+        computer_functions()
+
+def user_highrisk():
+    global computer_current_health
+    global user_current_health
+    global user_current_mana
+    if computer_highrisk_attacks == "Dark Pulse":
+        computer_current_health -= 40  # Damage
+        user_current_mana -= 30  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif computer_highrisk_attacks == "Inferno":
+        computer_current_health -= 50  # Damage
+        user_current_health -= 20 # User burning themselves
+        user_current_mana -= 40  # Mana cost
+        current_stats()
+        computer_functions()
+
+    elif computer_highrisk_attacks == "Soul Flare":
+        hit_chance = random.randint(1, 100)
+        if hit_chance <= 60:  # 60% chance to land the attack
+            computer_current_health -= 60  # Damage
+        else:
+            user_current_health -= 15  # Miss penalty damage
+        user_current_mana -= 40  # Mana cost
+        current_stats()
+        print("Soul Flare Missed!")
+        computer_functions()
+
+def computer_basic():
+    global user_current_health
+    global computer_current_mana
+    global player_move
+    global computer_poison_active
+    if computer_basic_attacks == "Fireball":
+        user_current_health -= 30
+        computer_current_mana -= 15
+        current_stats()
+        player_functions()
+
+    elif computer_basic_attacks == "Arcane Blast":
+        user_current_health -= 25
+        computer_current_mana -= 10
+        current_stats()
+        player_functions()
+
+    elif computer_basic_attacks == "Lightning Strike":
+        user_current_health -= 45
+        computer_current_mana -= 25
+        current_stats()
+        player_functions()
+
+def computer_elemental():
+    global user_current_health
+    global computer_current_mana
+    global player_move
+    global computer_poison_active
+    if computer_elemental_attacks == "Ice Shards":
+        user_current_health -= 30
+        computer_current_mana -= 15
+        current_stats()
+        player_functions()
+
+    elif computer_elemental_attacks == "Earthquake":
+        user_current_health -= 28
+        computer_current_mana -= 18
+        current_stats()
+        player_functions()
+
+    elif computer_elemental_attacks == "Poison Cloud":
+        computer_poison_active = True
+        user_current_health -= 18
+        computer_current_mana -= 14
+        current_stats()
+        computer_apply_poison()
+        player_functions()
+
+def computer_defensive():
+    global computer_current_mana
+    global user_current_health
+    global computer_mana_shield_active
+
+    if user_defensive_attacks == "Mana Shield":
+        computer_mana_shield_active = True  # Turn on the shield
+        computer_current_mana -= 50
+        current_stats()
+        player_functions()
+
+    elif user_defensive_attacks == "Counter Strike":
+        computer_current_mana -= 15  # Mana cost
+        current_stats()
+        player_functions()
+
+    elif user_defensive_attacks == "Healing":
+        user_current_health += 30  # Healing amount
+        computer_current_mana -= 20  # Mana cost
+        current_stats()
+        player_functions()
+
+def computer_highrisk():
+    global user_current_health
+    global computer_current_mana
+    global computer_current_health
+    global player_move
+    if computer_highrisk_attacks == "Dark Pulse":
+        user_current_health -= 40
+        computer_current_mana -= 30
+        current_stats()
+        player_functions()
+
+    elif computer_highrisk_attacks == "Inferno":
+        user_current_health -= 50
+        computer_current_health -= 5  # first turn of burn
+        computer_current_mana -= 40
+        current_stats()
+        player_functions()
+
+    elif computer_highrisk_attacks == "Soul Flare":
+        hit_chance = random.randint(1, 100)
+        if hit_chance <= 60:
+            user_current_health -= 60
+        else:
+            computer_current_health -= 15
+        computer_current_mana -= 40
+        current_stats()
+        print("Soul Flare Missed!")
+        player_functions()
+
+#Update and Display player stats
+def current_stats():
+    print(f"""
+    +-------------------------------+-------------------------------+
+    |         🧠 COMPUTER           |           🧙 PLAYER           |
+    +-------------------------------+-------------------------------+
+    | Health:  {computer_current_health:<3} / 150            | Health: {user_current_health:<3} / 150             |
+    | Mana:  {computer_current_mana:<3}/ 100               | Mana: {user_current_mana:<3} / 100               |
+    |                               |                               |
+    | Basic Attacks:                | Basic Attacks:                |
+    | {computer_basic_attacks:<30} | {user_basic_attacks:<30} |
+    | Elemental Attacks:            | Elemental Attacks:            |
+    | {computer_elemental_attacks:<30} | {user_elemental_attacks:<30} |
+    | Defensive Abilities:          | Defensive Abilities:          |
+    | {computer_defensive_attacks:<30} | {user_defensive_attacks:<30} |
+    | High-Risk, High-Reward:       | High-Risk, High-Reward:       |
+    | {computer_highrisk_attacks:<30} | {user_highrisk_attacks:<30} |
+    +-------------------------------+-------------------------------+
+    | What Happened:                | What Happened:                |
+    | - [Event description here]    | - [Event description here]    |
+    +-------------------------------+-------------------------------+
+    """)
+
+def player_functions():  # Accept player_move as a parameter
+
+    while True:
+        player_move = input("Player, what is your choice? [type basic, elemental, defensive or HRHR]: ").lower()
+        if player_move == "basic":
+            user_basic()
+            break
+        elif player_move == "elemental":
+            user_elemental()
+            break
+        elif player_move == "defensive":
+            user_defensive()
+            break
+        elif player_move == "hrhr":
+            user_highrisk()
+            break
+        else:
+            print("Please enter a valid option.")
+            continue
+
+# Updated computer_functions to handle its logic
+def computer_functions():
+    computer_move_choices = ["basic", "elemental", "defensive", "highrisk"]
+    computer_move = random.choice(computer_move_choices)
+    print(f"Computer move: {computer_move}")
+    if computer_move == "basic":
+        computer_basic()
+    elif computer_move == "elemental":
+        computer_elemental()
+    elif computer_move == "defensive":
+        computer_defensive()
+    elif computer_move == "highrisk":
+        computer_highrisk()
+
+# Game logic to start battle
+def pve_battle_logic():
+    print("Battle Begins in...")
+    for i in range(5, 0, -1):
+        print(i)
+        time.sleep(1)  # Add sleep here
+
+    print(" ")
+    print("-" * 100)
+    print(" ")
+    current_stats()
+    start_first = ["Player", "Computer"]
+    start_first_choice = random.choice(start_first)
+    print(f"{start_first_choice} starts first!")
+
+    global player_move
+    if start_first_choice == "Player":
+        player_functions()
+    else:
+        computer_functions()
+
+# Game title and intro
+print("""
+╔═══════════════════════════╗
+║       🧙 PyMage 🐍        ║
+╚═══════════════════════════╝
+
+Welcome to the Arcane Arena!
+
+You are a PyMage — a master of spells and strategy.
+Face off against enemy wizards controlled by dark code,
+or challenge a real opponent in magical combat.
+
+Outsmart. Outcast. Outspell.
+
+Will you rise... or be deleted?
+
+Created by Mojalefa Sekgobela (May 2025)
+""")
+
+play_option = input("PyMage, are you ready? Enter E to conjure your destiny, I to see ability descriptions or Q to quit. ").lower()
+game_initiation()
