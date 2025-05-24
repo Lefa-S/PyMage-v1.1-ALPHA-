@@ -50,6 +50,26 @@ def game_initiation():
                 "PyMage, are you ready? Enter E to conjure your destiny, I to see ability descriptions or Q to quit. ").lower()
             continue
 
+def game_end():
+    global user_current_health
+    global computer_current_health
+    global computer_current_mana
+    global user_current_mana
+    while True:
+        print("GAME OVER!")
+        game_end_input = input("Press ENTER to exit or R to restart: ").lower()
+        if game_end_input == "r":
+            user_current_health = 150
+            user_current_mana = 100
+            computer_current_health = 150
+            computer_current_mana = 100
+            game_initiation()
+        elif game_end_input == "":
+            exit()
+        else:
+            print("Please enter a valid option.")
+            continue
+
 def ability_descriptions():
     global play_option
     print("Basic Ability Descriptions:")
@@ -111,61 +131,84 @@ while user_poison_active:
 def user_focus():
     global user_current_mana
     user_current_mana += 30
+    current_stats()
     computer_functions()
 
 def automatic_user_focus():
     global user_current_mana
     print("Player mana depleted focusing...")
     user_current_mana += 30
+    current_stats()
     computer_functions()
-
-if user_current_mana <= 0:
-    automatic_user_focus()
 
 def user_basic():
     global computer_current_health
     global user_current_mana
     if user_basic_attacks == "Fireball":
-        computer_current_health -= 30  # Damage
-        user_current_mana -= 15  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 15:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 30  # Damage
+            user_current_mana -= 15  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_basic_attacks == "Arcane Blast":
-        computer_current_health -= 25  # Damage1
-        user_current_mana -= 10  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 10:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 25  # Damage1
+            user_current_mana -= 10  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_basic_attacks == "Lightning Strike":
-        computer_current_health -= 45  # Damage
-        user_current_mana -= 25  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 25:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 45  # Damage
+            user_current_mana -= 25  # Mana cost
+            current_stats()
+            computer_functions()
 
 def user_elemental():
     global computer_current_health
     global user_current_mana
     global user_poison_active
     if user_elemental_attacks == "Ice Shards":
-        computer_current_health -= 18  # Damage
-        user_current_mana -= 12  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 12:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 18  # Damage
+            user_current_mana -= 12  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_elemental_attacks == "Earthquake":
-        computer_current_health -= 28  # Damage
-        user_current_mana -= 18  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 18:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 28  # Damage
+            user_current_mana -= 18  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_elemental_attacks == "Poison Cloud":
-        user_poison_active = True
-        computer_current_health -= 12  # Damage per turn over 3 turns
-        user_current_mana -= 15  # Mana cost
-        current_stats()
-        user_apply_poison()
-        computer_functions()
+        if user_current_mana < 15:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            user_poison_active = True
+            computer_current_health -= 12  # Damage per turn over 3 turns
+            user_current_mana -= 15  # Mana cost
+            current_stats()
+            user_apply_poison()
+            computer_functions()
 
 def user_defensive():
     global user_current_mana
@@ -173,70 +216,94 @@ def user_defensive():
     global user_mana_shield_active
 
     if user_defensive_attacks == "Mana Shield":
-        user_mana_shield_active = True  # Turn on the shield
-        user_current_mana -= 50
-        current_stats()
-        computer_functions()
+        if user_current_mana < 50:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            user_mana_shield_active = True  # Turn on the shield
+            user_current_mana -= 50
+            current_stats()
+            computer_functions()
 
 
     elif user_defensive_attacks == "Counter Strike":
-        user_current_mana -= 15  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 15:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            user_current_mana -= 15  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_defensive_attacks == "Healing":
-        user_current_health += 30  # Healing amount
-        user_current_mana -= 20  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 20:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            user_current_health += 30  # Healing amount
+            user_current_mana -= 20  # Mana cost
+            current_stats()
+            computer_functions()
 
 def user_highrisk():
     global computer_current_health
     global user_current_health
     global user_current_mana
     if user_highrisk_attacks == "Dark Pulse":
-        computer_current_health -= 40  # Damage
-        user_current_mana -= 30  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 30:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 40  # Damage
+            user_current_mana -= 30  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_highrisk_attacks == "Inferno":
-        computer_current_health -= 50  # Damage
-        user_current_health -= 20 # User burning themselves
-        user_current_mana -= 40  # Mana cost
-        current_stats()
-        computer_functions()
+        if user_current_mana < 40:
+            print("Not enough mana!")
+            player_functions()
+        else:
+            computer_current_health -= 50  # Damage
+            user_current_health -= 20 # User burning themselves
+            user_current_mana -= 40  # Mana cost
+            current_stats()
+            computer_functions()
 
     elif user_highrisk_attacks == "Soul Flare":
-        hit_chance = random.randint(1, 100)
-        if hit_chance <= 60:  # 60% chance to land the attack
-            computer_current_health -= 60  # Damage
+        if user_current_mana < 40:
+            print("Not enough mana!")
+            player_functions()
         else:
-            user_current_health -= 15  # Miss penalty damage
-        user_current_mana -= 40  # Mana cost
-        current_stats()
-        print("Soul Flare Missed!")
-        computer_functions()
+            hit_chance = random.randint(1, 100)
+            if hit_chance <= 60:  # 60% chance to land the attack
+                computer_current_health -= 60
+                user_current_mana -= 40# Damage
+                computer_functions()
+            else:
+                user_current_health -= 40  # Miss penalty damage
+                user_current_mana -= 40  # Mana cost
+                current_stats()
+                print("Soul Flare Missed!")
+                computer_functions()
 
 def user_death():
+    current_stats()
     print("Player has been slain!")
-
-if user_current_health <= 0:
-    user_death()
+    game_end()
 
 def computer_focus():
     global computer_current_mana
     computer_current_mana += 30
+    current_stats()
     player_functions()
 
 def automatic_computer_focus():
     global computer_current_mana
     print("Computer mana depleted focusing...")
     computer_current_mana += 30
+    current_stats()
     player_functions()
-
-if computer_current_mana <= 0:
-    automatic_computer_focus()
 
 def computer_basic():
     global user_current_health
@@ -244,22 +311,34 @@ def computer_basic():
     global player_move
     global computer_poison_active
     if computer_basic_attacks == "Fireball":
-        user_current_health -= 30
-        computer_current_mana -= 15
-        current_stats()
-        player_functions()
+        if computer_current_mana < 15:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            user_current_health -= 30
+            computer_current_mana -= 15
+            current_stats()
+            player_functions()
 
     elif computer_basic_attacks == "Arcane Blast":
-        user_current_health -= 25
-        computer_current_mana -= 10
-        current_stats()
-        player_functions()
+        if computer_current_mana < 10:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            user_current_health -= 25
+            computer_current_mana -= 10
+            current_stats()
+            player_functions()
 
     elif computer_basic_attacks == "Lightning Strike":
-        user_current_health -= 45
-        computer_current_mana -= 25
-        current_stats()
-        player_functions()
+        if computer_current_mana < 25:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            user_current_health -= 45
+            computer_current_mana -= 25
+            current_stats()
+            player_functions()
 
 def computer_elemental():
     global user_current_health
@@ -273,18 +352,26 @@ def computer_elemental():
         player_functions()
 
     elif computer_elemental_attacks == "Earthquake":
-        user_current_health -= 28
-        computer_current_mana -= 18
-        current_stats()
-        player_functions()
+        if computer_current_mana < 40:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            user_current_health -= 28
+            computer_current_mana -= 18
+            current_stats()
+            player_functions()
 
     elif computer_elemental_attacks == "Poison Cloud":
-        computer_poison_active = True
-        user_current_health -= 18
-        computer_current_mana -= 14
-        current_stats()
-        computer_apply_poison()
-        player_functions()
+        if computer_current_mana < 14:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            computer_poison_active = True
+            user_current_health -= 18
+            computer_current_mana -= 14
+            current_stats()
+            computer_apply_poison()
+            player_functions()
 
 def computer_defensive():
     global computer_current_mana
@@ -292,21 +379,33 @@ def computer_defensive():
     global computer_mana_shield_active
     global computer_current_health
     if computer_defensive_attacks == "Mana Shield":
-        computer_mana_shield_active = True  # Turn on the shield
-        computer_current_mana -= 50
-        current_stats()
-        player_functions()
+        if computer_current_mana < 50:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            computer_mana_shield_active = True  # Turn on the shield
+            computer_current_mana -= 50
+            current_stats()
+            player_functions()
 
     elif computer_defensive_attacks == "Counter Strike":
-        computer_current_mana -= 15  # Mana cost
-        current_stats()
-        player_functions()
+        if computer_current_mana < 15:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            computer_current_mana -= 15  # Mana cost
+            current_stats()
+            player_functions()
 
     elif computer_defensive_attacks == "Healing":
-        computer_current_health += 30  # Healing amount
-        computer_current_mana -= 20  # Mana cost
-        current_stats()
-        player_functions()
+        if computer_current_mana < 20:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            computer_current_health += 30  # Healing amount
+            computer_current_mana -= 20  # Mana cost
+            current_stats()
+            player_functions()
 
 def computer_highrisk():
     global user_current_health
@@ -314,34 +413,47 @@ def computer_highrisk():
     global computer_current_health
     global player_move
     if computer_highrisk_attacks == "Dark Pulse":
-        user_current_health -= 40
-        computer_current_mana -= 30
-        current_stats()
-        player_functions()
+        if computer_current_mana < 30:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            user_current_health -= 40
+            computer_current_mana -= 30
+            current_stats()
+            player_functions()
 
     elif computer_highrisk_attacks == "Inferno":
-        user_current_health -= 50
-        computer_current_health -= 5  # first turn of burn
-        computer_current_mana -= 40
-        current_stats()
-        player_functions()
+        if computer_current_mana < 40:
+            print("Not enough mana!")
+            computer_functions()
+        else:
+            user_current_health -= 50
+            computer_current_health -= 20  # first turn of burn
+            computer_current_mana -= 40
+            current_stats()
+            player_functions()
 
     elif computer_highrisk_attacks == "Soul Flare":
-        hit_chance = random.randint(1, 100)
-        if hit_chance <= 60:
-            user_current_health -= 60
+        if computer_current_mana < 40:
+            print("Not enough mana!")
+            computer_functions()
         else:
-            computer_current_health -= 15
-        computer_current_mana -= 40
-        current_stats()
-        print("Soul Flare Missed!")
-        player_functions()
+            hit_chance = random.randint(1, 100)
+            if hit_chance <= 60:
+                user_current_health -= 60
+                computer_current_mana -= 40
+                player_functions()
+            else:
+                computer_current_health -= 40
+                computer_current_mana -= 40
+                current_stats()
+                print("Soul Flare Missed!")
+                player_functions()
 
 def computer_death():
+    current_stats()
     print("Computer has been slaughtered!")
-
-if computer_current_health <= 0:
-    computer_death()
+    game_end()
 
 
 #Update and Display player stats
@@ -367,9 +479,15 @@ def current_stats():
     +-------------------------------+-------------------------------+
     """)
 
-def player_functions():  # Accept player_move as a parameter
+def player_functions():  # Accept player_move
 
     while True:
+        if user_current_health <= 0:
+            user_death()
+            break
+        elif user_current_mana <= 0:
+            automatic_user_focus()
+            break
         player_move = input("Player, what is your choice? [type basic, elemental, defensive, HRHR or focus]: ").lower()
         if player_move == "basic":
             user_basic()
@@ -394,7 +512,11 @@ def computer_functions():
     computer_move_choices = ["basic", "elemental", "defensive", "highrisk", "focus"]
     computer_move = random.choice(computer_move_choices)
     print(f"Computer move: {computer_move}")
-    if computer_move == "basic":
+    if computer_current_health <= 0:
+        computer_death()
+    elif computer_current_mana <= 0:
+        automatic_computer_focus()
+    elif computer_move == "basic":
         computer_basic()
     elif computer_move == "elemental":
         computer_elemental()
@@ -405,12 +527,13 @@ def computer_functions():
     elif computer_move == "focus":
         computer_focus()
 
+
 # Game logic to start battle
 def pve_battle_logic():
     print("Battle Begins in...")
     for i in range(5, 0, -1):
         print(i)
-        time.sleep(1)  # Add sleep here
+        time.sleep(1)
 
     print(" ")
     print("-" * 100)
